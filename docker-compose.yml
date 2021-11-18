@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  relay:
+    image: ghcr.io/buildinglink/email/smtp:1.0.0
+    build:
+      context: .
+    hostname: smtprelay
+    container_name: smtprelay
+    restart: always
+    ports:
+      - "25:25"
+  latest:
+    image: ghcr.io/buildinglink/email/smtp:latest
+    extends: relay
+
