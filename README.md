@@ -94,11 +94,110 @@ EOF
 
 ![width:640px](./img/test.png)
 
+---
+<style scoped>
+h2{
+  font-size: 16pt;
+  color: red;
+  margin-top:-2px;
+}
+code {
+  margin-top:-29px;
+  font-size: 13pt;
+  color: black;
+  background:#ffffff;
+  border: 1px solid black;
+}
+</style>
 
+# SMTP - Resource Reservations
+
+## http://vault.buildinglink.local/reservations/smtp  (on vpn)
+
+```json
+{
+  name: "smtp",                                           // reservation name
+  group: "email",                                         // rancher project
+  type: "bfs",                                            // bfs | bms | brs | other
+  description: "A scalable mail transfer agent",          // a simple description
+  port: 25,                                               // a port reservation
+  team: "Rome",                                           // origin content
+  requestor: "Karam",                                     // who1
+  reviewer: "Marc",                                       // who2
+  date: "11/10/2021",                                     // creation date
+  updated: "11/17/2021",                                  // last updated
+  documents: [ "https://github.com/BuildingLink/SMTP/blob/master/README.md" ],
+  estates:   [ "rancher-dev","rancher-uat","rancher-prod-pdc","rancher-prod-azure" ],
+  azrg: [ ],                                              // azure resource group name
+  monitors: [ "k8nri"],                                   // monitor list
+  health: [ "node", "health"],                            // health invocation
+  pipeline: [ ],                                          // build
+  rmq: [ ],                                               // rabbit queue names
+  data: [ ],                                              // datastores
+  ep: [                                                   // endpoints
+    "tcp:smtprelay-dev.buildinglink.local",
+    "tcp:smtprelay-uat.buildinglink.local",
+    "tcp:smtprelay-pdc.buildinglink.local",
+    "tcp:smtprelay-azure.buildinglink.local"
+  ]
+}
+```
+
+---
+<style scoped>
+h3 {
+  font-size: 14pt;
+  margin-top:2px;
+}
+ul {
+  font-size: 14pt;
+  margin-top:0px;
+}
+code {
+  font-size: 13pt;
+  color: black;
+  background:#ffffff;
+  border: 1px solid black;
+  margin-top: -12px;
+  margin-bottom: -12px;
+}
+</style>
+
+# Standup a local cluster
+
+## Using Rancher Desktop ([fresh install][T1] / factory reset)
+
+### v0.6.1 k8s (v1.17.6 our rancher rke version)
+
+```bash
+# bin/1-login.sh - make sure you are in the vpn
+export lookup=http://vault.buildinglink.local/accounts/GITHUB2
+export valu=$(curl -s --retry-connrefused --retry-delay 2 "$lookup" | jq '.user' | tr -d '"')
+export valp=$(curl -s --retry-connrefused --retry-delay 2 "$lookup" | jq '.pat' | tr -d '"')
+echo $valp | nerdctl login -u $valu --password-stdin ghcr.io
+Login Succeeded
+
+# bin/2-pull.sh
+nerdctl -n k8s.io pull ghcr.io/buildinglink/baseline:latest
+
+# build smtp...
+kim build -t "ghcr.io/buildinglink/email/smtp:latest" .
+
+# show me the money
+nerdctl -n k8s.io images | grep ghcr  
+
+ghcr.io/buildinglink/baseline      latest         ad119652b0bf    About a minute ago    186.4 MiB
+ghcr.io/buildinglink/email/smtp    latest         f012db0bd478    37 seconds ago        0.0 B
+
+```
+
+---
 <!-- REFERENCES -->
 [//]: https://marp.app/
 [//]: https://unpkg.com/mermaid@0.5.2/exdoc/index.html
 [//]: https://postmarkapp.com/blog/smtp-relay-services
+[//]: https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands
+[T1]: https://github.com/rancher-sandbox/rancher-desktop/releases
 
 [Fig1]:https://mermaid.ink/img/eyJjb2RlIjoiXG5zZXF1ZW5jZURpYWdyYW1cbiAgICBhdXRvbnVtYmVyXG4gICAgU01UUCBDbGllbnQtPj4rU01UUCBTZXJ2ZXI6IEhFTE9cbiAgICBTTVRQIFNlcnZlci0tPj4tU01UUCBDbGllbnQ6IDI1MCBPS1xuICAgIFNNVFAgQ2xpZW50LT4-K1NNVFAgU2VydmVyOk1BSUwgRlJPTTogcm9tZUBidWlsZGluZ2xpbmsuY29tXG4gICAgU01UUCBTZXJ2ZXItLT4-LVNNVFAgQ2xpZW50OiAyNTAgT0tcbiAgICBTTVRQIENsaWVudC0-PitTTVRQIFNlcnZlcjpSQ1BUIFRPOiBtaW50Z3JlZW5idWdAZ21haWwuY29tXG4gICAgU01UUCBTZXJ2ZXItLT4-LVNNVFAgQ2xpZW50OiAyNTAgT0tcbiAgICBTTVRQIENsaWVudC0-PitTTVRQIFNlcnZlcjpEQVRBXG4gICAgU01UUCBTZXJ2ZXItLT4-LVNNVFAgQ2xpZW50OiAzNTRcbiAgICBOb3RlIG92ZXIgU01UUCBTZXJ2ZXI6IEVuZCBvZiBNZXNzYWdlIENvbnRlbnRcbiAgICBTTVRQIENsaWVudC0-PitTTVRQIFNlcnZlcjogO1xuICAgIFNNVFAgU2VydmVyLS0-Pi1TTVRQIENsaWVudDogMjUwIE9LXG4gICAgU01UUCBDbGllbnQtPj4rU01UUCBTZXJ2ZXI6UVVJVFxuICAgIFNNVFAgU2VydmVyLS0-Pi1TTVRQIENsaWVudDogMjIxXG5cbiIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6dHJ1ZSwiYXV0b1N5bmMiOmZhbHNlLCJ1cGRhdGVEaWFncmFtIjpmYWxzZX0
 
