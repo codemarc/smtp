@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  EXIM_ACCEPT_MAX: "0"
+  EXIM_ACCEPT_MAX_PER_HOST: "0"
+  EXIM_ALLOWED_DOMAINS: buildinglink.com:blk-test.com:blkqa.com
+  EXIM_ALLOWED_SENDERS: 10.1.0.0/22:10.1.20.0/24:10.1.40.0/22:10.2.1.0/24
+  EXIM_LOCALINTERFACE: 0.0.0.0
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2021-11-18T15:47:18Z"
+  name: exim4
+  namespace: smtp
+  resourceVersion: "106151563"
+  selfLink: /api/v1/namespaces/smtp/configmaps/exim4
+  uid: 808b07d8-5bd0-4c9c-a0ae-84f9f161d8b0

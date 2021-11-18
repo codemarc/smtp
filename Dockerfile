@@ -13,11 +13,4 @@ RUN apt-get update && \
 # add the exim4 start script
 COPY start.sh /exim_start
 
-ENV EXIM_LOCALINTERFACE=0.0.0.0
-ENV EXIM_ALLOWED_SENDERS=10.1.0.0/22:10.1.20.0/24:10.1.40.0/22:10.2.1.0/24
-ENV EXIM_ALLOWED_DOMAINS=buildinglink.com:blk-test.com:blkqa.com
-ENV EXIM_ACCEPT_MAX_PER_HOST=0
-ENV EXIM_ACCEPT_MAX=0
-
-
 ENTRYPOINT ["/exim_start"]

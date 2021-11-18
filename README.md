@@ -81,7 +81,7 @@ Exim4 is an open source, highly configurable MTA and has features that are lacki
 
 ```bash
 telnet 127.0.0.1 25 <<EOF  
-HELO 1
+HELO World
 MAIL FROM: marc@buildinglink.com
 RCPT TO: codemarc@gmail.com
 DATA
@@ -190,6 +190,8 @@ ghcr.io/buildinglink/baseline      latest         ad119652b0bf    About a minute
 ghcr.io/buildinglink/email/smtp    latest         f012db0bd478    37 seconds ago        0.0 B
 
 ```
+
+---
 
 ---
 <!-- REFERENCES -->

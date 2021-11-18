@@ -5,15 +5,13 @@ echo "# exim config" >$conf
 
 echo "dc_eximconfig_configtype='smarthost'" >>$conf
 echo "dc_other_hostnames='$HOSTNAME'" >>$conf
-#echo "dc_local_interfaces='$EXIM_LOCALINTERFACE'" >>$conf
-#echo "dc_local_interfaces='[${BIND_IP:-0.0.0.0}]:${PORT:-25}'" >>$conf
 echo "dc_relay_nets='$EXIM_ALLOWED_SENDERS'" >>$conf
 echo "dc_relay_domains='$EXIM_ALLOWED_DOMAINS'" >>$conf
 echo "dc_smarthost='email-smtp.${SES_REGION:=us-east-1}.amazonaws.com::${SES_PORT:=587}'" >>$conf
 echo "dc_smtp_accept_max='$EXIM_ACCEPT_MAX'" >>$conf
 echo "dc_smtp_accept_max_per_host='$EXIM_ACCEPT_MAX_PER_HOST'" >>$conf
 echo "disable_ipv6='true'" >>$conf
-echo "CFILEMODE='644'" >>$conf
+echo "CFILEMODE='644'" >>$conf$()
 
 # Test if EXIM_MESSAGE_SIZE_LIMIT if set?..
 if [[ -v EXIM_MESSAGE_SIZE_LIMIT ]]; then
@@ -22,11 +20,9 @@ if [[ -v EXIM_MESSAGE_SIZE_LIMIT ]]; then
 fi
 
 # Update passwd.client
-SES_USER=AKIAZMFOX7XZIUC6NAPP
-SES_PASSWORD=BNM1cB92RwYp40z01i8IRxm+aa33k0Atn9h4ONdtzI/u
-passwd=/etc/exim4/passwd.client
-echo "*.amazonaws.com:$SES_USER:$SES_PASSWORD" >$passwd
+echo "*.amazonaws.com:$SES_USER:$SES_PASSWORD" >/etc/exim4/passwd.client
 
+# Update configuration
 update-exim4.conf
 
 # Sort of hack to send logs to stdout

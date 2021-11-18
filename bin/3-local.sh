@@ -1,0 +1,17 @@
+#!/bin/bash
+# create the namespace and make it active
+kubectl create namespace smtp
+kubectl config set-context --current --namespace=smtp
+
+# and the registry credentials
+source ./bin/1-login.sh
+kubectl create secret docker-registry ghcr --docker-server=ghcr.io --docker-username=$valu --docker-password=$valp
+
+# and the aws ses auth
+kubectl create secret generic aws-ses --from-literal=SES_USER=AKIAZMFOX7XZIUC6NAPP --from-literal=SES_PASSWORD=BNM1cB92RwYp40z01i8IRxm+aa33k0Atn9h4ONdtzI/u
+
+# and the configmap for the environment parameters
+kubectl create -f ./_yaml/configmap-exim4.yaml
+
+# and the smtp relay deployment
+kubectl create -f ./_yaml/deployment-relay.yaml
