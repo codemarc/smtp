@@ -1,9 +1,10 @@
 apiVersion: v1
 data:
-  EXIM_ACCEPT_MAX: "0"
-  EXIM_ACCEPT_MAX_PER_HOST: "0"
+  EXIM_ACCEPT_MAX: "50"
+  EXIM_ACCEPT_MAX_PER_HOST: "50"
   EXIM_ALLOWED_DOMAINS: buildinglink.com:blk-test.com:blkqa.com
   EXIM_ALLOWED_SENDERS: 10.1.0.0/22:10.1.20.0/24:10.1.40.0/22:10.2.1.0/24
+  EXIM_CONNECT_BACKLOG: "50"
   EXIM_LOCALINTERFACE: 0.0.0.0
 kind: ConfigMap
 metadata:
