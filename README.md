@@ -81,7 +81,7 @@ Exim4 is an open source, highly configurable MTA and has features that are lacki
 
 ```bash
 telnet 127.0.0.1 25 <<EOF  
-HELO World
+EHLO SMTP
 MAIL FROM: marc@buildinglink.com
 RCPT TO: codemarc@gmail.com
 DATA
