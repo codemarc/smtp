@@ -10,6 +10,7 @@ echo "dc_relay_domains='$EXIM_ALLOWED_DOMAINS'" >>$conf
 echo "dc_smarthost='email-smtp.${SES_REGION:=us-east-1}.amazonaws.com::${SES_PORT:=587}'" >>$conf
 echo "dc_smtp_accept_max='$EXIM_ACCEPT_MAX'" >>$conf
 echo "dc_smtp_accept_max_per_host='$EXIM_ACCEPT_MAX_PER_HOST'" >>$conf
+echo "dc_smtp_accept_max_per_connection='EXIM_ACCEPT_MAX_PER_CONNECTION'" >>$conf
 echo "dc_smtp_accept_queue_per_connection='$EXIM_ACCEPT_QUEUE_PER_CONNECTION'" >>$conf
 echo "dc_smtp_connect_backlog='$EXIM_CONNECT_BACKLOG'" >>$conf
 echo "disable_ipv6='true'" >>$conf
