@@ -12,5 +12,6 @@ RUN apt-get update && \
 
 # add the exim4 start script
 COPY start.sh /exim_start
+COPY health.js package.json smtp/
 
 ENTRYPOINT ["/exim_start"]

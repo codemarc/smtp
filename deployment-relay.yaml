@@ -2,19 +2,19 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    deployment.kubernetes.io/revision: "15"
+    deployment.kubernetes.io/revision: "1"
     field.cattle.io/creatorId: u-afmk44mea2
     field.cattle.io/publicEndpoints: '[{"nodeName":"local:machine-7wxpl","addresses":["10.1.1.116"],"port":25,"protocol":"TCP","podName":"smtp:relay-68c599f8b8-kq86q","allNodes":false}]'
-  creationTimestamp: "2021-11-18T15:53:40Z"
-  generation: 40
+  creationTimestamp: "2021-11-23T01:43:31Z"
+  generation: 5
   labels:
     cattle.io/creator: norman
     workload.user.cattle.io/workloadselector: deployment-smtp-relay
   name: relay
   namespace: smtp
-  resourceVersion: "106288664"
+  resourceVersion: "110744"
   selfLink: /apis/apps/v1/namespaces/smtp/deployments/relay
-  uid: 187285c9-3d60-42f3-ac39-8982b77232ee
+  uid: 07a7efc7-e29a-4d9d-909a-ff2b82a5bf85
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -74,19 +74,19 @@ spec:
 status:
   availableReplicas: 1
   conditions:
-  - lastTransitionTime: "2021-11-18T21:45:27Z"
-    lastUpdateTime: "2021-11-18T21:45:27Z"
-    message: Deployment has minimum availability.
-    reason: MinimumReplicasAvailable
-    status: "True"
-    type: Available
-  - lastTransitionTime: "2021-11-18T15:53:40Z"
-    lastUpdateTime: "2021-11-18T22:01:13Z"
+  - lastTransitionTime: "2021-11-23T01:43:31Z"
+    lastUpdateTime: "2021-11-23T01:43:34Z"
     message: ReplicaSet "relay-68c599f8b8" has successfully progressed.
     reason: NewReplicaSetAvailable
     status: "True"
     type: Progressing
-  observedGeneration: 40
+  - lastTransitionTime: "2021-11-23T06:36:17Z"
+    lastUpdateTime: "2021-11-23T06:36:17Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 5
   readyReplicas: 1
   replicas: 1
   updatedReplicas: 1

@@ -1,7 +1,22 @@
 #!/bin/bash
+namesp=smtp
+estate="rancher-desktop"
+context=$(kubectl config current-context)
+
+echo Context is set to $context
+echo
+if [ ! "$context" = "$estate" ]; then
+  echo Context is not set to "$estate"
+  kubectl config use-context "$estate"
+  echo
+  read -p "Press enter to retry..."
+  echo $0
+  $0
+fi
+
 # create the namespace and make it active
-kubectl create namespace smtp
-kubectl config set-context --current --namespace=smtp
+kubectl create namespace $namesp 2>/dev/null
+kubectl config set-context --current --namespace=$namesp
 
 # and the registry credentials
 source ./bin/1-login.sh
