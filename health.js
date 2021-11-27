@@ -11,11 +11,17 @@ import { resolve } from 'path'
   const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000)
 
   let relays = {
-    "pdc": "smtprelay-pdc.buildinglink.local",
-    "azure": "smtprelay-azure.buildinglink.local",
-    "uat": "smtprelay-uat.buildinglink.local",
+    "desk": "127.0.0.1", // container must use host network
     "dev": "smtprelay-dev.buildinglink.local",
-    "desk": "127.0.0.1" // container must use host network
+    "uat": "smtprelay-uat.buildinglink.local",
+    "pdc": "smtprelay-pdc.buildinglink.local",
+    "azure": "smtprelay-azure.buildinglink.local"
+  }
+
+  if (process.argv[2] == 'help' || process.argv[2] == '--help') {
+    console.log('health [[relay] email] WHERE:')
+    console.log(relays)
+    process.exit(0)
   }
 
   let relay = relays[process.argv[2] ?? 'desk'] ?? relays['desk']
@@ -47,10 +53,7 @@ import { resolve } from 'path'
     console.log(`rcpt(${process.argv[3]})-> ${rc}`)
     if (rc != 250) throw "bad receiver"
 
-    rc = await s.data(`Subject: SMTP Test ${utcSecondsSinceEpoch}\r
-    This is a test of the SMTP RELAY system.
-    relay run thru ${relay}
-    This is only a test`)
+    rc = await s.data(`Subject: SMTP Test ${utcSecondsSinceEpoch}\nSMTP relay running thru ${relay}.\nThis is only a test.`)
     console.log(`data(...)-> ${rc}`)
     if (rc != 250) throw "bad data"
 
