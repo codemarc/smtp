@@ -170,6 +170,8 @@ code {
 ### v0.6.1 k8s (v1.17.6 our rancher rke version)
 
 ```bash
+
+
 # bin/1-login.sh - make sure you are in the vpn
 export lookup=http://vault.buildinglink.local/accounts/GITHUB2
 export valu=$(curl -s --retry-connrefused --retry-delay 2 "$lookup" | jq '.user' | tr -d '"')
@@ -192,8 +194,54 @@ ghcr.io/buildinglink/email/smtp    latest         f012db0bd478    37 seconds ago
 ```
 
 ---
+<style scoped>
+h3 {
+  font-size: 14pt;
+  margin-top:2px;
+}
+ul {
+  font-size: 14pt;
+  margin-top:0px;
+}
+code {
+  font-size: 13pt;
+  color: black;
+  background:#ffffff;
+  border: 1px solid black;
+  margin-top: -12px;
+  margin-bottom: -12px;
+}
+p {font-size:22pt;margin-bottom:24px;}
+</style>
 
----
+# Deploy to the local cluster
+
+```bash
+# create the namespace and make it active
+kubectl create namespace $namesp 2>/dev/null
+kubectl config set-context --current --namespace=$namesp
+
+# and the registry credentials
+source ./bin/1-login.sh
+kubectl create secret docker-registry ghcr --docker-server=ghcr.io --docker-username=$valu --docker-password=$valp
+
+# and the aws ses auth
+kubectl create secret generic aws-ses --from-literal=SES_USER=AKIAZMFOX7XZIUC6NAPP --from-literal=SES_PASSWORD=BNM1cB92RwYp40z01i8IRxm+aa33k0Atn9h4ONdtzI/u
+
+# and the configmap for the environment parameters
+kubectl create -f ./_yaml/configmap-exim4.yaml
+
+# and the smtp relay deployment
+kubectl create -f ./_yaml/deployment-relay.yaml
+```
+
+<br/>
+
+## When deploying to rancher-desktop
+
+In order to work with localhost you must define  
+__hostNetwork: true__  
+
 <!-- REFERENCES -->
 [//]: https://marp.app/
 [//]: https://unpkg.com/mermaid@0.5.2/exdoc/index.html
