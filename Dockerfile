@@ -12,6 +12,8 @@ RUN apt-get update && \
 
 # add the exim4 start script
 COPY start.sh /exim_start
-COPY health.js package.json smtp/
+COPY health.js package.json /home/node/
+
+RUN cd /home/node && yarn install
 
 ENTRYPOINT ["/exim_start"]
