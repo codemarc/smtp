@@ -12,7 +12,7 @@ RUN apt-get update && \
 
 # add the exim4 start script
 COPY start.sh /exim_start
-COPY health.js package.json /home/node/
+COPY health/health.js health/package.json /home/node/
 
 RUN cd /home/node && yarn install
 
