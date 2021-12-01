@@ -50,7 +50,7 @@ const health = (tag,msg) => {
   let rc={
     Name:"smtp",
     Category: tag,
-    Tags: relay,
+    Tags: `healthcheck,${checkReadiness?'readiness':'liveness'},${relay}`,
     Cid: utcMilllisecondsSinceEpoch,
     Host: hostname,
     message: `${timestamp}|${msg}`
