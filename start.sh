@@ -4,7 +4,7 @@ conf=/etc/exim4/update-exim4.conf.conf
 echo "# exim config" >$conf
 
 echo "dc_eximconfig_configtype='smarthost'" >>$conf
-echo "dc_other_hostnames='$HOSTNAME'" >>$conf
+echo "dc_primary_hostname='$HOSTNAME'" >>$conf
 echo "dc_relay_nets='$EXIM_ALLOWED_SENDERS'" >>$conf
 echo "dc_relay_domains='$EXIM_ALLOWED_DOMAINS'" >>$conf
 echo "dc_smarthost='email-smtp.${SES_REGION:=us-east-1}.amazonaws.com::${SES_PORT:=587}'" >>$conf

@@ -9,7 +9,7 @@ const {resolve} = require('path')
 const signon = `\n${pak.name} v${pak.version}\nCopyright (c) 2021 BuildingLink.com\nAll Rights Reserved.\n`
 const now = new Date()
 const timestamp = format(now, 'yyyy-MM-dd HH:mm:ss')
-const health = (tag,msg) => `${timestamp}|smtp|${tag}|${utcMilllisecondsSinceEpoch}|${hostname}|${msg ?? ''}`
+
 const utcMilllisecondsSinceEpoch = now.getTime() + (now.getTimezoneOffset() * 60 * 1000)
 const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000)
 
@@ -39,6 +39,25 @@ const to = recpt ?? process.env.DSMTP_TO
 
 const subject = 'Subject: '+ (process.env.DSMTP_SUBJECT ?? `SMTP Test ${utcSecondsSinceEpoch}`)
 
+const email=`From: ${sender}
+To: ${to}
+Subject: ${subject}
+
+SMTP relay running thru ${relay} from ${hostname}. This is only a test.
+`
+
+const health = (tag,msg) => {
+  let rc={
+    Name:"smtp",
+    Category: tag,
+    Tags: relay,
+    Cid: utcMilllisecondsSinceEpoch,
+    Host: hostname,
+    messge: `${timestamp}|${msg}`
+  }
+  return JSON.stringify(rc);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // main
 const main = async () => {
@@ -59,61 +78,52 @@ where:
      -r, --ready      run Readiness Check
      -t , --to        recipient(s)
      -v, --version    display version and exit\n\n`)
-    exit(0)
+      exit(0)
+      }
+
+      let s = new SMTPClient({ host: relay, port: port })
+      let rc = await s.connect()
+
+      let o = `connect(${relay}:${rc})`
+      if (rc != 220) throw "bad connect"
+
+      rc = await s.greet({ hostname: hostname })
+      o += `->greet(${hostname}:${rc})`
+      if (rc != 250) throw "bad greet"
+
+      if (checkReadiness || !checkLiveness) {
+        rc = await s.quit()
+        o += `->quit(${rc})`
+        if (rc != 221) throw "bad quit"
+
+        resolve('Success')
+        console.log(health('info',o))
+        exit(0)
+      }
+
+      rc = await s.mail({ from: sender })
+      o += `->mail(${rc})`
+      if (rc != 250) throw "bad sender"
+
+      rc = await s.rcpt({ to: to })
+      o += `->rcpt(${to}:${rc})`
+      if (rc != 250) throw "bad receiver"
+
+      rc = await s.data(email)
+      o += `->data(${rc})`
+      if (rc != 250) throw "bad data"
+
+      rc = await s.quit()
+      o += `->quit(${rc})`
+      if (rc != 221) throw "bad quit"
+      resolve('Success')
+
+      console.log(health('info',o))
+      exit(0)
+    } catch(err) {
+      console.log(health('error',err))
+      exit(1)
     }
-
-    let s = new SMTPClient({ host: relay, port: port })
-    let rc = await s.connect()
-
-    let o = `connect(${relay}:${rc})`
-    if (rc != 220) throw "bad connect"
-
-    rc = await s.greet({ hostname: hostname })
-    o += `->greet(${hostname}:${rc})`
-    if (rc != 250) throw "bad greet"
-
-    if (checkReadiness || !checkLiveness) {
-    rc = await s.quit()
-    o += `->quit(${rc})`
-    if (rc != 221) throw "bad quit"
-
-    resolve('Success')
-    console.log(health('info',o))
-    exit(0)
-  }
-
-  rc = await s.mail({ from: sender })
-  o += `->mail(${rc})`
-  if (rc != 250) throw "bad sender"
-
-  rc = await s.rcpt({ to: to })
-  o += `->rcpt(${to}:${rc})`
-  if (rc != 250) throw "bad receiver"
-
-  rc = await s.data(`From: ${sender}
-To: ${to}
-Subject: ${subject}
-
-SMTP relay running thru ${relay}. 
-This is only a test.
-.
-`)
-  o += `->data(${rc})`
-  if (rc != 250) throw "bad data"
-
-  rc = await s.quit()
-  o += `->quit(${rc})`
-  if (rc != 221) throw "bad quit"
-  resolve('Success')
-
-  console.log(health('info',o))
-  exit(0)
-
-} catch(err) {
-  console.log(health('error',o))
-  exit(1)
-}
-
 }
 main()
 
