@@ -53,7 +53,7 @@ const health = (tag,msg) => {
     Tags: relay,
     Cid: utcMilllisecondsSinceEpoch,
     Host: hostname,
-    messge: `${timestamp}|${msg}`
+    message: `${timestamp}|${msg}`
   }
   return JSON.stringify(rc);
 }
